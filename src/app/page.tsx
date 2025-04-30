@@ -1,103 +1,95 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import { useChatStream } from "./hooks/useChatStream";
+import { RenderAIContent } from "./components/RenderAIContent";
+import { ProfileCircle, CpuCharge } from "iconsax-react";
+
+const Home = () => {
+  const { messages, sendMessage } = useChatStream();
+  const [input, setInput] = useState("");
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="flex w-full flex-col max-w-2xl mx-auto">
+      <div className="py-16 sm:px-2 lg:relative lg:px-0 lg:py-20">
+        <h1 className="text-center text-4xl font-bold">
+          <span className="inline bg-linear-to-r from-indigo-200 via-sky-400 to-indigo-200 bg-clip-text font-display text-4xl tracking-tight text-transparent">
+            LocAi Qwen3 Assistant
+          </span>
+        </h1>
+        <h2 className="text-center mt-3 mb-7 text-xl tracking-tight text-slate-400">
+          A local AI designed to think deeply and act clearly.
+        </h2>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+        <div className="space-y-4 max-w-2xl mx-auto">
+          {messages.map((msg, i) => (
+            <div key={i} className="flex items-start gap-3">
+              <div className="mt-1">
+                {msg.role === "user" ? (
+                  <ProfileCircle size="24" color="#60a5fa" variant="Bulk" />
+                ) : (
+                  <CpuCharge
+                    size="24"
+                    color="#34d399"
+                    variant="Bulk"
+                    className="animate-pulse"
+                  />
+                )}
+              </div>
+              <div
+                className={`whitespace-pre-wrap px-4 py-7 rounded-lg relative rounded-2xl backdrop-blur-sm ${
+                  msg.role === "user"
+                    ? "bg-slate-800/60 text-blue-200"
+                    : "bg-green-900/30 text-green-300 border border-green-950"
+                }`}
+              >
+                {msg.role === "user" ? (
+                  <>
+                    <div className="absolute -top-px right-11 left-20 h-px bg-linear-to-r from-sky-300/0 via-sky-300/70 to-sky-300/0"></div>
+                    <div className="absolute right-20 -bottom-px left-11 h-px bg-linear-to-r from-blue-400/0 via-blue-400 to-blue-400/0"></div>
+                  </>
+                ) : (
+                  <>
+                    <div className="absolute -top-px right-11 left-20 h-px bg-linear-to-r from-green-300/0 via-green-300/70 to-green-300/0"></div>
+                    <div className="absolute right-20 -bottom-px left-11 h-px bg-linear-to-r from-green-400/0 via-green-400 to-green-400/0"></div>
+                  </>
+                )}
+                <RenderAIContent content={msg.content} />
+              </div>
+            </div>
+          ))}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className="relative mt-7">
+          <div className="absolute -top-px right-11 left-20 h-px bg-linear-to-r from-sky-300/0 via-sky-300/70 to-sky-300/0"></div>
+          <div className="absolute right-20 -bottom-px left-11 h-px bg-linear-to-r from-blue-400/0 via-blue-400 to-blue-400/0"></div>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (input.trim()) {
+                sendMessage(input);
+                setInput("");
+              }
+            }}
+            className="flex mt-8 max-w-2xl mx-auto p-2 gap-2 rounded-3xl bg-[#0A101F]/80 dark:ring-1 dark:ring-slate-300/10"
+          >
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              className="flex-1 px-4 py-2 text-white bg-none focus:outline-none"
+              placeholder="Ask me anything..."
+            />
+            <button
+              type="submit"
+              className="py-2 px-7 rounded-3xl bg-slate-800/60 text-slate-400 ring-1 ring-white/10 text-sm"
+            >
+              Send
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default Home;
